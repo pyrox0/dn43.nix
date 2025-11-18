@@ -8,38 +8,39 @@ in
     ./bird2.nix
     ./stayrtr.nix
     ./roagen.nix
+    ./wg-tunnels.nix
   ];
 
   options.networking.dn42 = {
-    enable = lib.mkEnableOption "dn42 integration";
+    enable = lib.mkEnableOption "DN42 integration";
 
     routerId = lib.mkOption {
       type = lib.types.str;
-      description = "32bit router identifier.";
+      description = "32bit router identifier. Defaults to the router's IPv4 address(you probably shouldn't change this)";
       default = cfg.addr.v4;
     };
 
     as = lib.mkOption {
       type = lib.types.int;
-      description = "Autonomous System Number";
+      description = "Your DN42 Autonomous System Number";
     };
 
-    geo = lib.mkOption {
+    region = lib.mkOption {
       type = lib.types.int;
-      description = "";
+      description = "Region BGP Community Number(see https://dn42.dev/howto/BGP-communities#region)";
     };
 
     country = lib.mkOption {
       type = lib.types.int;
-      description = "";
+      description = "Region BGP Community Number(see https://dn42.dev/howto/BGP-communities#country)";
     };
 
     blockedAs = lib.mkOption {
       type = lib.types.listOf lib.types.int;
-      description = "";
+      description = "ASNs to block.";
     };
 
-    collector.enable = lib.mkEnableOption "Enable route collector";
+    collector.enable = lib.mkEnableOption "Enable peering with the DN42 route collector(https://dn42.dev/services/Route-Collector)";
 
     addr = {
       v4 = lib.mkOption {
@@ -56,12 +57,12 @@ in
     nets = {
       v4 = lib.mkOption {
         type = with lib.types; listOf str;
-        description = "Own IPv4 networks, list of CIDR";
+        description = "Own IPv4 networks, list of CIDRs";
       };
 
       v6 = lib.mkOption {
         type = with lib.types; listOf str;
-        description = "Own IPv6 networks, list of CIDR";
+        description = "Own IPv6 networks, list of CIDRs";
       };
     };
 
@@ -70,33 +71,33 @@ in
         options = {
           as = lib.mkOption {
             type = lib.types.int;
-            description = "Autonomous System number of the peer.";
+            description = "Autonomous System Number of the peer.";
           };
 
           extendedNextHop = lib.mkOption {
             type = lib.types.bool;
-            description = "If extended next-hop should be used. Creating IPv4 routes using an IPv6 next-hop address.";
+            description = "If extended next-hop should be used, which creates IPv4 routes using an IPv6 next-hop address.";
             default = false;
           };
 
           latency = lib.mkOption {
             type = lib.types.int;
-            description = "";
+            description = "Latency BGP Community(see https://dn42.dev/howto/BGP-communities#bgp-community-criteria)";
           };
 
           bandwidth = lib.mkOption {
             type = lib.types.int;
-            description = "";
+            description = "Bandwidth BGP Community(see https://dn42.dev/howto/BGP-communities#bgp-community-criteria)";
           };
 
           crypto = lib.mkOption {
             type = lib.types.int;
-            description = "";
+            description = "Encryption BGP Community(see https://dn42.dev/howto/BGP-communities#bgp-community-criteria)";
           };
 
           transit = lib.mkOption {
             type = lib.types.bool;
-            description = "";
+            description = "Whether to transit BGP routes from other peers via this peering";
           };
 
           addr = {
