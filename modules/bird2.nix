@@ -1,7 +1,7 @@
 { config, lib, ... }:
 
 let
-  cfg = config.networking.dn42;
+  cfg = config.dn42;
   useVrf = cfg.vrf.name != null && cfg.vrf.table != null;
   bird = if lib.versionAtLeast lib.version "25.05" then "bird" else "bird2";
 in
@@ -28,7 +28,7 @@ in
         define OWNAS = ${toString cfg.as};
         define OWNIP = ${toString cfg.addr.v6};
 
-        define REGION_GEO = ${toString cfg.geo};
+        define REGION_GEO = ${toString cfg.region};
         define REGION_COUNTRY = ${toString cfg.country};
 
         define ASN_BLACKLIST = [];
@@ -71,7 +71,7 @@ in
 
       protocols = {
 
-        rpki.roa_dn42 = lib.mkIf config.networking.dn42.stayrtr.enable ''
+        rpki.roa_dn42 = lib.mkIf cfg.stayrtr.enable ''
           roa4 { table dnroa_4; };
           roa6 { table dnroa_6; };
           remote 127.0.0.1;
@@ -82,13 +82,13 @@ in
         '';
 
         static = {
-          static_roa_4 = lib.mkIf config.networking.dn42.roagen.enable ''
+          static_roa_4 = lib.mkIf cfg.roagen.enable ''
             roa4 { table dnroa_4; };
-            include "${config.networking.dn42.roagen.outputDir}/dn42-roa4.conf";
+            include "${cfg.roagen.outputDir}/dn42-roa4.conf";
           '';
-          static_roa_6 = lib.mkIf config.networking.dn42.roagen.enable ''
+          static_roa_6 = lib.mkIf cfg.roagen.enable ''
             roa6 { table dnroa_6; };
-            include "${config.networking.dn42.roagen.outputDir}/dn42-roa6.conf";
+            include "${cfg.roagen.outputDir}/dn42-roa6.conf";
           '';
           static_4 = ''
             ${lib.optionalString useVrf "vrf \"${cfg.vrf.name}\";"}

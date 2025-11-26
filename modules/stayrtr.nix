@@ -1,11 +1,11 @@
 { config, lib, pkgs, ... }:
 
 let
-  cfg = config.networking.dn42.stayrtr;
+  cfg = config.dn42.stayrtr;
   bird = if lib.versionAtLeast lib.version "25.05" then "bird" else "bird2";
 in
 {
-  options.networking.dn42.stayrtr = with lib; {
+  options.dn42.stayrtr = with lib; {
     enable = mkEnableOption "dn42-stayrtr";
 
     cache = mkOption {

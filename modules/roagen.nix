@@ -6,11 +6,11 @@
 }:
 
 let
-  cfg = config.networking.dn42.roagen;
+  cfg = config.dn42.roagen;
   bird = if lib.versionAtLeast lib.version "25.05" then "bird" else "bird2";
 in
 {
-  options.networking.dn42.roagen = with lib; {
+  options.dn42.roagen = with lib; {
     enable = mkEnableOption "dn42-roagen";
 
     outputDir = mkOption {
