@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib) types;
-  cfg = config.networking.dn42.wg;
+  cfg = config.dn42.wg;
 
   tunnelDef = {
     options = {
@@ -69,7 +69,7 @@ let
   };
 in
 {
-  options.networking.dn42.wg = {
+  options.dn42.wg = {
     tunnelDefaults = lib.mkOption {
       description = "The default settings to apply to all tunnels";
       type = types.submodule tunnelDef;
@@ -77,11 +77,12 @@ in
     tunnels = lib.mkOption {
       description = "DN42 WireGuard tunnels configuration";
       type = types.attrsOf (types.submodule tunnelDef);
+      default = { };
     };
     configureFirewall = lib.mkEnableOption "Firewall rules for DN42 tunnels";
   };
   config.networking = {
-    wireguard.interfaces = lib.mapAttrs' (
+    wireguard.interfaces = lib.optionalAttrs (cfg.tunnels != { }) (lib.mapAttrs' (
       name: value:
       let
         # Merge defaults with tunnel config, right side has priority
@@ -112,7 +113,7 @@ in
           ) "${pkgs.iproute2}/bin/ip addr add ${fc.localAddrs.v6} peer ${fc.peerAddrs.v6} dev wg42_${name}"}
         '';
       }
-    ) (lib.filterAttrs (_: v: v.enable) cfg.tunnels);
+    ) (lib.filterAttrs (_: v: v.enable) cfg.tunnels));
     firewall = lib.mkIf cfg.configureFirewall {
       trustedInterfaces = lib.mapAttrsToList (name: _: "wg42_" + name) (lib.filterAttrs (_: v: v.enable) cfg.tunnels);
       checkReversePath = false;

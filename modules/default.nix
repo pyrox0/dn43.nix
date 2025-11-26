@@ -1,6 +1,6 @@
 { config, lib, ... }:
 let
-  cfg = config.networking.dn42;
+  cfg = config.dn42;
 in
 {
   imports = [
@@ -11,7 +11,7 @@ in
     ./wg-tunnels.nix
   ];
 
-  options.networking.dn42 = {
+  options.dn42 = {
     enable = lib.mkEnableOption "DN42 integration";
 
     routerId = lib.mkOption {

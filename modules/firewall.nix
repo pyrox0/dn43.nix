@@ -1,6 +1,6 @@
 { config, lib, ... }:
 let
-  enable = config.networking.dn42.enable && config.networking.firewall.enable;
+  enable = config.dn42.enable && config.networking.firewall.enable;
 
 in
 {
@@ -17,11 +17,6 @@ in
             179
           ];
         })
-        (
-          map ({ interface, ... }: interface) (
-            builtins.attrValues config.networking.dn42.peers
-          )
-        )
     )
   );
 }
